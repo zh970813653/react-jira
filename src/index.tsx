@@ -2,14 +2,15 @@ import React from "react";
 import ReactDOM from "react-dom";
 import App from "./App";
 import './App.css'
-import { loadDevTools } from "jira-dev-tool";
+import { loadServer,DevTools } from "jira-dev-tool";
 import { AppProviders } from "./context";
 import 'antd/dist/antd.less';
 
-loadDevTools(() =>
+loadServer (() =>
   ReactDOM.render(
     <React.StrictMode>
       <AppProviders>
+        <DevTools />
         <App />
       </AppProviders>
     </React.StrictMode>,

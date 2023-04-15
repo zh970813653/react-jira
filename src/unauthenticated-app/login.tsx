@@ -1,11 +1,18 @@
 import React, { FormEvent } from "react";
 import { Auth, useAuth } from "../context/auth-content";
 import { Button, Form, Input } from "antd";
+import { useAsnc } from "../utils/use-async";
 
-export const LoginScreen = () => {
+export const LoginScreen = ({onError}:{onError:(error:Error)=>void}) => {
   const { login, user } = useAuth() as Auth;
-  const handleSubmit = (values:{username:string,password:string  }) => {
-    login(values);
+  const {run,isLoading} = useAsnc(undefined, {throwOnError: true})
+  const handleSubmit = async (values:{username:string,password:string  }) => {
+    try {
+      await run(login(values))
+    } catch (error) {
+      onError(error as Error)
+    }
+    
   };
   return (
     <Form onFinish={handleSubmit} >
@@ -24,7 +31,7 @@ export const LoginScreen = () => {
         <Input placeholder="密码" />
       </Form.Item>
       <Form.Item >
-        <Button type="primary" htmlType="submit">
+        <Button loading={isLoading} type="primary" htmlType="submit">
           登陆 
         </Button>
       </Form.Item>

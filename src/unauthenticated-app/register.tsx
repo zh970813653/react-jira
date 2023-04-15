@@ -1,15 +1,23 @@
 import React, { FormEvent } from 'react'
 import { Auth, useAuth } from '../context/auth-content'
 import { Button, Form, Input } from "antd";
+import { useAsnc } from '../utils/use-async';
 
-export const RegisterScreen = () => {
+export const RegisterScreen = ({onError}:{onError:(error:Error)=>void}) => {
   const {register,user} = useAuth() as Auth
-    const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
-        e.preventDefault()
-        const username = (e.currentTarget.elements[0] as HTMLInputElement).value
-        const password = (e.currentTarget.elements[1] as HTMLInputElement).value
-        register({username,password})
-    }
+  const {run,isLoading} = useAsnc(undefined, {throwOnError: true})
+    const handleSubmit = async (values:{username:string,password:string, cpassword:string }) => {
+      try {
+        const {username,password,cpassword} = values
+        if (password !==cpassword) {
+          return onError(new Error('两次密码输入不一致'))
+        }
+        await run(register({username,password}))
+      } catch (error) {
+        onError(error as Error)
+      }
+      
+    };
   return (
     <Form onFinish={handleSubmit} >
     <Form.Item
@@ -22,10 +30,16 @@ export const RegisterScreen = () => {
       name="password"
       rules={[{ required: true, message: "Please input your password!" }]}
     >
-      <Input placeholder="密码" />
+      <Input type='password' placeholder="密码" />
+    </Form.Item>
+    <Form.Item
+      name="cpassword"
+      rules={[{ required: true, message: "请确认密码" }]}
+    >
+      <Input type='password' placeholder="确认密码" />
     </Form.Item>
     <Form.Item >
-      <Button type="primary" htmlType="submit">
+      <Button loading={isLoading} type="primary" htmlType="submit">
         注册 
       </Button>
     </Form.Item>

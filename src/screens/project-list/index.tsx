@@ -1,9 +1,11 @@
-import { useEffect, useState } from "react";
-import { SearchPanel } from "./SearchPanel";
-import {cleanObject, paramsToString, useDebounce} from '../../utils'
+import React,{useState } from "react";
 import List from "./List";
-import React from "react";
-import { useHttp } from "../../utils/http";
+import {Typography} from 'antd'
+import { SearchPanel } from "./SearchPanel";
+import {useDebounce} from '../../utils'
+import styled from "@emotion/styled";
+import { useProjects } from "../../utils/projects";
+import { useUsers } from "../../utils/useUsers";
 
 const apiUrl = process.env.REACT_APP_API_URL
 
@@ -13,24 +15,22 @@ const ProjectListScreen = () => {
     personId: "",
   });
   const debounceParamsValue = useDebounce(param,500)
-  const [users,setUsers] = useState([])
-  const [list, setList] = useState([]);
-  const http = useHttp()
-  useEffect(() => {
-    http('projects',{data:cleanObject(debounceParamsValue)}).then(setList)
-
-  }, [debounceParamsValue]);
-  useEffect(() => {
-    http('users').then(setUsers)
-
-  }, []);
-
+  // const [users,setUsers] = useState([])
+  const {data:list,isLoading,error} = useProjects(debounceParamsValue)
+  const {data: users} = useUsers()
   return (
-    <div>
-      <SearchPanel param={param} setParam={setParam} users={users}></SearchPanel>
-      <List list={list} users={users}></List>
-    </div>
+    <Container>
+      <h1>项目列表</h1>
+      <SearchPanel param={param} setParam={setParam} users={users || []}></SearchPanel>
+       {error ? <Typography.Text type="danger">{error?.message}</Typography.Text>:null}
+      <List dataSource={list || []} users={users||[]} loading={isLoading}></List>
+    </Container>
   );
 };
+
+const Container = styled.div`
+  padding: 3.2rem;
+  width: 100%
+`
 
 export default ProjectListScreen;

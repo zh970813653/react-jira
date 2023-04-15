@@ -1,7 +1,11 @@
-import { ReactChildren, ReactNode } from "react";
+import React,{ ReactChildren, ReactNode } from "react";
 import { AuthProvider } from "./auth-content";
-import React from "react";
+import {QueryClient,QueryClientProvider} from "react-query";
 
 export const AppProviders = ({children}:{children: ReactNode}) => {
-    return <AuthProvider children={children} />
+    return (
+        <QueryClientProvider client={new QueryClient()}>
+            <AuthProvider children={children} />
+        </QueryClientProvider>
+    )
 }
