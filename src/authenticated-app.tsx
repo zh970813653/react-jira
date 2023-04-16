@@ -5,6 +5,10 @@ import { Auth, useAuth } from "./context/auth-content";
 import styled from "@emotion/styled";
 import { Row } from "./components/lib";
 import { Button, Dropdown, Menu } from "antd";
+import { resetRoute, useDocumentTitle } from "./utils";
+import { Navigate, Route, Router, Routes } from "react-router-dom";
+import { ProjectScreen } from "./screens/project";
+// import { useDocumentTitle } from "./utils";
 
 /**
  * grid 和 flex 各自的应用场景
@@ -19,38 +23,55 @@ import { Button, Dropdown, Menu } from "antd";
  */
 
 export const AuthenticatedApp = () => {
-  let { logout, user } = useAuth() as Auth;
+  useDocumentTitle("项目列表", false);
   return (
     <Container>
-      <Header between={true}>
-        <HeaderLeft gap={true}>
-          <SoftwareLogo width={"18rem "} color={"rga(38,132,255)"} />
-          <h2>项目</h2>
-          <h2>用户</h2>
-        </HeaderLeft>
-        <HeaderRight>
-          <Dropdown
-            overlay={
-              <Menu>
-                <Menu.Item key={"logout"}>
-                  <Button onClick={logout} type="link">
-                    登出
-                  </Button>
-                </Menu.Item>
-              </Menu>
-            }
-          >
-            <Button onClick={(e) => e.preventDefault()} type="link">
-              Hi, {user?.name}
-            </Button>
-          </Dropdown>
-        </HeaderRight>
-      </Header>
-
+      <PageHeader></PageHeader>
       <Main>
-        <ProjectListScreen></ProjectListScreen>
+          <Routes>
+            <Route path={'/projects'} element={<ProjectListScreen />}></Route>
+            <Route
+              path={'/projects/:prujectId/*'}
+              element={<ProjectScreen />}
+            ></Route>
+             <Route path="/" element={<Navigate to="/projects" />} />
+            {/* <Route index  element={<ProjectListScreen />} /> */}
+          </Routes>
       </Main>
     </Container>
+  );
+};
+
+const PageHeader = () => {
+  let { logout, user } = useAuth() as Auth;
+  return (
+    <Header between={true}>
+      <HeaderLeft gap={true}>
+        <Button type="link" style={{display:'inline-flex', alignItems:'center'}} onClick={resetRoute}>
+        <SoftwareLogo width={"18rem "} color={"rga(38,132,255)"} />
+
+        </Button>
+        <span>项目</span>
+        <span>用户</span>
+      </HeaderLeft>
+      <HeaderRight>
+        <Dropdown
+          overlay={
+            <Menu>
+              <Menu.Item key={"logout"}>
+                <Button onClick={logout} type="link">
+                  登出
+                </Button>
+              </Menu.Item>
+            </Menu>
+          }
+        >
+          <Button onClick={(e) => e.preventDefault()} type="link">
+            Hi, {user?.name}
+          </Button>
+        </Dropdown>
+      </HeaderRight>
+    </Header>
   );
 };
 
@@ -68,7 +89,11 @@ const Header = styled(Row)`
   box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.1);
   z-index: 1;
 `;
-const HeaderLeft = styled(Row)``;
+const HeaderLeft = styled(Row)`
+* > span:hover {
+  cursor: pointer;
+}
+`;
 const HeaderRight = styled.div``;
 const Main = styled.main`
   display: flex;

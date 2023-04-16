@@ -17,7 +17,6 @@ export const LoginScreen = ({onError}:{onError:(error:Error)=>void}) => {
   return (
     <Form onFinish={handleSubmit} >
       <Form.Item
-
         name="username"
         rules={[{ required: true, message: "Please input your username!" }]}
       >

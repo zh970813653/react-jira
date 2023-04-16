@@ -1,5 +1,5 @@
 import { type } from "os";
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 
 export const isFalsy = (value:any) => value === 0
 export const isVoid = (value: unknown) =>
@@ -54,7 +54,6 @@ export const useArray = <T>(val:T[]) => {
     }
     const removeIndex = (index:number) => {
         const array = value.slice()
-        debugger
         array.splice(index,1)
         setValue(array)
     }
@@ -69,3 +68,21 @@ export const useArray = <T>(val:T[]) => {
     }
 }
 
+export const useDocumentTitle = (title: string, keepOnUnmount: boolean = true) => {
+    // useRef在整个生命周期中 都不会变化
+    const oldTitle = useRef(document.title).current
+    useEffect(()=>{
+        document.title = title
+    },[title])
+
+    useEffect (()=> {
+        return () => {
+            if (!keepOnUnmount) {
+                document.title = oldTitle
+            }   
+            
+        }
+    },[keepOnUnmount,oldTitle])
+}
+
+export const resetRoute = () => (window.location.href = window.location.origin);

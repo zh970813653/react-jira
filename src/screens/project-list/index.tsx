@@ -2,7 +2,7 @@ import React,{useState } from "react";
 import List from "./List";
 import {Typography} from 'antd'
 import { SearchPanel } from "./SearchPanel";
-import {useDebounce} from '../../utils'
+import {useDebounce, useDocumentTitle} from '../../utils'
 import styled from "@emotion/styled";
 import { useProjects } from "../../utils/projects";
 import { useUsers } from "../../utils/useUsers";
@@ -15,7 +15,6 @@ const ProjectListScreen = () => {
     personId: "",
   });
   const debounceParamsValue = useDebounce(param,500)
-  // const [users,setUsers] = useState([])
   const {data:list,isLoading,error} = useProjects(debounceParamsValue)
   const {data: users} = useUsers()
   return (

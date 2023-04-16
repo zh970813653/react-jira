@@ -1,17 +1,20 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import App from "./App";
-import './App.css'
-import { loadServer,DevTools } from "jira-dev-tool";
+import "./App.css";
+import { loadServer, DevTools } from "jira-dev-tool";
 import { AppProviders } from "./context";
-import 'antd/dist/antd.less';
+import "antd/dist/antd.less";
 
-loadServer (() =>
+import { BrowserRouter } from "react-router-dom";
+loadServer(() =>
   ReactDOM.render(
     <React.StrictMode>
       <AppProviders>
         <DevTools />
-        <App />
+        <BrowserRouter>
+          <App />
+        </BrowserRouter>
       </AppProviders>
     </React.StrictMode>,
     document.getElementById("root")
