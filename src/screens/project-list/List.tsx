@@ -3,6 +3,8 @@ import { User } from "./SearchPanel";
 import { Table, TableProps } from "antd";
 import dayjs from "dayjs";
 import { Link } from "react-router-dom";
+import { Pin } from "../../components/pin";
+import { useEditProject } from "../../utils/projects";
 
 export interface Project {
   id: number;
@@ -19,8 +21,16 @@ interface ListProps extends TableProps<Project> {
 }
 
 const List = ({ users, ...props}: ListProps) => {
+  const {mutate} = useEditProject()
+  const pinProject = (id: number) => (pin: boolean) => mutate({id, pin})
   return <Table pagination={false} rowKey="id" columns={
     [
+      {
+        title: <Pin checked={true} disabled={true}></Pin>,
+        render(value,project) {
+          return <Pin checked={project.pin} onCheckedChange={pinProject(project.id)}></Pin>
+        }
+      },
       {
         title: '名称',
         sorter: (a,b) =>a.name.localeCompare(b.name),

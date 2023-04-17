@@ -14,3 +14,35 @@ export const useProjects = (params?: Partial<Project>) => {
         ...result
     }
 }
+
+export const useEditProject = () => {
+    const {run,...result} = useAsnc()
+    const http = useHttp()
+    const mutate = (params: Partial<Project>) => {
+        run(http(`projects/${params.id}`, {
+            data: params,
+            method: 'PATCH'
+        }))
+    }
+
+    return {
+        mutate,
+        ...result
+    }
+}
+
+export const useAddProject = () => {
+    const {run,...result} = useAsnc()
+    const http = useHttp()
+    const mutate = (params: Partial<Project>) => {
+        run(http(`projects/${params.id}`, {
+            data: params,
+            method: 'POST'
+        }))
+    }
+
+    return {
+        mutate,
+        ...result
+    }
+}
