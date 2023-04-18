@@ -2,6 +2,7 @@ import { paramsToString } from "./index";
 import * as auth from "../auth-provider";
 import { Auth, useAuth } from "../context/auth-content";
 import qs from "qs";
+import { useCallback } from "react";
 interface Config extends RequestInit {
   token?: string;
   data?: object;
@@ -43,5 +44,5 @@ export const http = (endpoint: string, { data, token, ...customConfig }: Config 
 
 export const useHttp = () => {
     const {user} = useAuth() as Auth
-    return (...[endpoint,config]:Parameters<typeof http>) => http(endpoint,{...config,token:user?.token})
+    return useCallback((...[endpoint,config]:Parameters<typeof http>) => http(endpoint,{...config,token:user?.token}),[user?.token])
 }

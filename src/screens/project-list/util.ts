@@ -1,8 +1,9 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useUrlQueryParam } from "../../utils/url";
 
 export const useProjectSearchParams = () => {
-  const [param, setParam] = useUrlQueryParam(["name", "personId"]);
+  const [params] = useState(["name", "personId"])
+  const [param, setParam] = useUrlQueryParam(params);
   return [
     useMemo(()=>(
         { 

@@ -1,11 +1,11 @@
 import React, { FormEvent } from 'react'
 import { Auth, useAuth } from '../context/auth-content'
 import { Button, Form, Input } from "antd";
-import { useAsnc } from '../utils/use-async';
+import { useAsync } from '../utils/use-async';
 
 export const RegisterScreen = ({onError}:{onError:(error:Error)=>void}) => {
   const {register,user} = useAuth() as Auth
-  const {run,isLoading} = useAsnc(undefined, {throwOnError: true})
+  const {run,isLoading} = useAsync(undefined, {throwOnError: true})
     const handleSubmit = async (values:{username:string,password:string, cpassword:string }) => {
       try {
         const {username,password,cpassword} = values

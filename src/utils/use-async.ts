@@ -1,4 +1,5 @@
-import { useState } from "react"
+import { useCallback, useState } from "react"
+import { useMountedRef } from "."
 
 interface State<T>{
     error: Error | null
@@ -14,24 +15,26 @@ const defaultInitialState: State<null> = {
 const defaultConfig = {
     throwOnError: false
 }
-export const useAsnc = <T>(initialState?:State<T>,initialConfig?:typeof defaultConfig) => {
+export const useAsync = <T>(initialState?:State<T>,initialConfig?:typeof defaultConfig) => {
     const config = {...defaultConfig,...initialConfig}
     const [state,setState] = useState({
         ...defaultInitialState,
         ...initialState
     })
+    const mountedRef = useMountedRef()
     const [retry,setRetry] = useState(()=>()=>{})
-    const setData = (data: T) => setState({
+    const setData = useCallback((data: T) => setState({
         data,
         error: null,
         stat: 'success'
-    })
-    const setError = (error: Error) => setState({
+    }),[])
+    const setError = useCallback((error: Error) => setState({
         data: null, 
         error,
         stat:'error'
-    })
-    const run = (promise:Promise<T>,runConfig?:{ retry: ()=> Promise<T>}) => {
+    }),[])
+    const run = useCallback(
+        (promise:Promise<T>,runConfig?:{ retry: ()=> Promise<T>}) => {
         if (!promise || !promise.then) {
             throw new Error('请传入 promise 类型数据')
         }
@@ -40,10 +43,13 @@ export const useAsnc = <T>(initialState?:State<T>,initialConfig?:typeof defaultC
                 run (runConfig?.retry(),runConfig)
             }
         })
-        setState({...state,stat: 'loading'})
+        setState(prevState => ({...prevState,stat: 'loading'}))
         return promise.then(result => {
-            setData(result)
-            return result
+            if (mountedRef.current) {
+                setData(result)
+                return result
+            }
+
         }).catch(error => {
             setError(error)
             if (config.throwOnError) {
@@ -51,7 +57,7 @@ export const useAsnc = <T>(initialState?:State<T>,initialConfig?:typeof defaultC
             }
             return error 
         })
-    }
+    },[config.throwOnError,mountedRef,setData,setError])
 
     // const retry = () => {
     //     run(oldPromise)

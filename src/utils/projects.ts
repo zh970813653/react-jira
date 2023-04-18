@@ -1,25 +1,25 @@
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import { Project } from "../screens/project-list/List";
 import { useHttp } from "./http";
-import { useAsnc } from "./use-async";
+import { useAsync } from "./use-async";
 import { cleanObject } from ".";
 
 export const useProjects = (params?: Partial<Project>) => {
     const http = useHttp()
-    const {run,...result} = useAsnc<Project[]>()
-    const fetchProjects = () => http('projects',{data:cleanObject(params)})
+    const {run,...result} = useAsync<Project[]>()
+    const fetchProjects = useCallback(() => http('projects',{data:cleanObject(params)}),[http,params])
     useEffect(()=> {
         run(fetchProjects(),{
             retry: fetchProjects
         })
-    },[params])
+    },[params,run,fetchProjects])
     return {
         ...result
     }
 }
 
 export const useEditProject = () => {
-    const {run,...result} = useAsnc()
+    const {run,...result} = useAsync()
     const http = useHttp()
    
     const mutate = (params: Partial<Project>) => {
@@ -36,7 +36,7 @@ export const useEditProject = () => {
 }
 
 export const useAddProject = () => {
-    const {run,...result} = useAsnc()
+    const {run,...result} = useAsync()
     const http = useHttp()
     const mutate = (params: Partial<Project>) => {
         run(http(`projects/${params.id}`, {

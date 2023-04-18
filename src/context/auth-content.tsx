@@ -2,7 +2,7 @@ import React, { ReactNode, useContext, useEffect, useState } from "react";
 import { User } from "../screens/project-list/SearchPanel";
 import * as auth from "../auth-provider";
 import { http } from "../utils/http";
-import { useAsnc } from "../utils/use-async";
+import { useAsync } from "../utils/use-async";
 import { FullPageErrorFallback, FullPageLoading } from "../components/lib";
 interface AuthForm {
   username: string;
@@ -32,13 +32,13 @@ AuthContext.displayName = 'AuthContext'
 
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const {run,error,isIdle,isLoading,setData:setUser,data:user} = useAsnc<User| null>()
+  const {run,error,isIdle,isLoading,setData:setUser,data:user} = useAsync<User| null>()
   const login = (form: AuthForm) => auth.login(form).then(setUser)
   const register = (form: AuthForm) => auth.register(form).then(setUser)
   const logout = () => auth.logout().then(() => setUser(null))  
   useEffect(()=> {
     run(bootstrapUser())
-  },[])
+  },[run])
   if (isIdle || isLoading) {
     return <FullPageLoading />
   }

@@ -86,3 +86,16 @@ export const useDocumentTitle = (title: string, keepOnUnmount: boolean = true) =
 }
 
 export const resetRoute = () => (window.location.href = window.location.origin);
+
+
+// 这个hook的作用是为了避免页面卸载的时候，已经卸载的页面请求没有完毕从而导致控制台报错
+export const useMountedRef = () => {
+    const mountedRef = useRef(false)
+    useEffect(()=> {
+        mountedRef.current =  true
+        return () => {
+            mountedRef.current = false
+        }
+    })
+    return mountedRef
+}

@@ -12,7 +12,7 @@ export const useUrlQueryParam = <S extends string>(keys: S[]) => {
                     [key]: searchParams.get(key) || ''
                 }
             },{} as {[key in S]: string})
-        ),[searchParams]),
+        ),[searchParams,keys]),
         (param: {[key in S]?: unknown}) => {
             // fromEntries 把健值对 转换成一个对象 或者说 把带有Symbol.iterator属性的值转成对象
             const o = cleanObject({...Object.fromEntries(searchParams),...param}) as URLSearchParamsInit
