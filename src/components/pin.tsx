@@ -8,7 +8,6 @@ interface PinProps extends React.ComponentProps<typeof Rate> {
 
 export const Pin = ({checked,onCheckedChange,...restProps}: PinProps) => {
     const handleCheckedChange = (num: number) => {
-        debugger
         onCheckedChange?. (!!num)
     }
   return (

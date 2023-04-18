@@ -18,11 +18,12 @@ export interface Project {
 
 interface ListProps extends TableProps<Project> {
   users: User[];
+  refresh?: () => void
 }
 
 const List = ({ users, ...props}: ListProps) => {
   const {mutate} = useEditProject()
-  const pinProject = (id: number) => (pin: boolean) => mutate({id, pin})
+  const pinProject = (id: number) => (pin: boolean) => mutate({id, pin}).then(props.refresh)
   return <Table pagination={false} rowKey="id" columns={
     [
       {

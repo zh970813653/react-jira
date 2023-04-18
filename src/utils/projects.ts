@@ -7,8 +7,11 @@ import { cleanObject } from ".";
 export const useProjects = (params?: Partial<Project>) => {
     const http = useHttp()
     const {run,...result} = useAsnc<Project[]>()
+    const fetchProjects = () => http('projects',{data:cleanObject(params)})
     useEffect(()=> {
-        run(http('projects',{data:cleanObject(params)}))
+        run(fetchProjects(),{
+            retry: fetchProjects
+        })
     },[params])
     return {
         ...result
@@ -18,8 +21,9 @@ export const useProjects = (params?: Partial<Project>) => {
 export const useEditProject = () => {
     const {run,...result} = useAsnc()
     const http = useHttp()
+   
     const mutate = (params: Partial<Project>) => {
-        run(http(`projects/${params.id}`, {
+        return run(http(`projects/${params.id}`, {
             data: params,
             method: 'PATCH'
         }))

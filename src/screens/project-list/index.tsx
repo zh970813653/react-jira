@@ -16,14 +16,14 @@ const ProjectListScreen = () => {
   // });
   const [param,setParam] = useProjectSearchParams()
   const debounceParamsValue = useDebounce(param,500)
-  const {data:list,isLoading,error} = useProjects(debounceParamsValue)
+  const {data:list,isLoading,error,retry} = useProjects(debounceParamsValue)
   const {data: users} = useUsers()
   return (
     <Container>
       <h1>项目列表</h1>
       <SearchPanel param={param || {}} setParam={setParam} users={users || []}></SearchPanel>
        {error ? <Typography.Text type="danger">{error?.message}</Typography.Text>:null}
-      <List dataSource={list || []} users={users||[]} loading={isLoading}></List>
+      <List refresh={retry} dataSource={list || []} users={users||[]} loading={isLoading}></List>
     </Container>
   );
 };
