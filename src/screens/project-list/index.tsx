@@ -1,21 +1,22 @@
-import React,{useState } from "react";
+import React from "react";
 import List from "./List";
-import {Button, Typography} from 'antd'
+import {Typography} from 'antd'
 import { SearchPanel } from "./SearchPanel";
 import {useDebounce} from '../../utils'
 import styled from "@emotion/styled";
 import { useProjects } from "../../utils/projects";
 import { useUsers } from "../../utils/useUsers";
 import { useProjectSearchParams } from "./util";
-import { Row } from "../../components/lib";
+import { ButtonNoPadding, Row } from "../../components/lib";
+import { useDispatch } from "react-redux";
+import { projectListActions } from "../../store/project-list.slice";
 
-const ProjectListScreen = (props: {
-  projectButton: JSX.Element
-}) => {
+const ProjectListScreen = () => {
   // const [, setParam] = useState({
   //   name: "",
   //   personId: "",
   // });
+  const dispatch = useDispatch()
   const [param,setParam] = useProjectSearchParams()
   const debounceParamsValue = useDebounce(param,500)
   const {data:list,isLoading,error,retry} = useProjects(debounceParamsValue)
@@ -24,12 +25,12 @@ const ProjectListScreen = (props: {
     <Container>
       <Row between={true }>
         <h1>项目列表</h1>
-        {props.projectButton}
+        <ButtonNoPadding type="link" onClick={()=>dispatch(projectListActions.openProjectModal())}>创建项目</ButtonNoPadding>
       </Row>
       
       <SearchPanel param={param || {}} setParam={setParam} users={users || []}></SearchPanel>
        {error ? <Typography.Text type="danger">{error?.message}</Typography.Text>:null}
-      <List refresh={retry} dataSource={list || []} users={users||[]} loading={isLoading} projectButton={props.projectButton}></List>
+      <List refresh={retry} dataSource={list || []} users={users||[]} loading={isLoading} ></List>
     </Container>
   );
 };
