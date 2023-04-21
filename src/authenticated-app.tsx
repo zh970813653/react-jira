@@ -1,13 +1,14 @@
-import React from "react";
+import React, { ReactNode, useState } from "react";
 import ProjectListScreen from "./screens/project-list";
 import { ReactComponent as SoftwareLogo } from "./assets/software-logo.svg"; // svg
 import { Auth, useAuth } from "./context/auth-content";
 import styled from "@emotion/styled";
-import { Row } from "./components/lib";
+import { ButtonNoPadding, Row } from "./components/lib";
 import { Button, Dropdown, Menu } from "antd";
 import { resetRoute, useDocumentTitle } from "./utils";
 import { Navigate, Route, Router, Routes } from "react-router-dom";
 import { ProjectScreen } from "./screens/project";
+import { ProjectPopover } from "./components/project-popover";
 // import { useDocumentTitle } from "./utils";
 
 /**
@@ -24,12 +25,15 @@ import { ProjectScreen } from "./screens/project";
 
 export const AuthenticatedApp = () => {
   useDocumentTitle("项目列表", false);
+  const [projectModalOpen,setProjectModalOpen  ] = useState(false)
   return (
     <Container>
-      <PageHeader></PageHeader>
+      <PageHeader projectButton = {
+        <ButtonNoPadding type='link' onClick={() => setProjectModalOpen(true)}> 创建项目</ButtonNoPadding>
+      }></PageHeader>
       <Main>
           <Routes>
-            <Route path={'/projects'} element={<ProjectListScreen />}></Route>
+            <Route path={'/projects'} element={<ProjectListScreen projectButton = { <ButtonNoPadding type='link' onClick={() => setProjectModalOpen(true)}> 创建项目</ButtonNoPadding>}/>}></Route>
             <Route
               path={'/projects/:prujectId/*'}
               element={<ProjectScreen />}
@@ -42,38 +46,47 @@ export const AuthenticatedApp = () => {
   );
 };
 
-const PageHeader = () => {
-  let { logout, user } = useAuth() as Auth;
+const PageHeader = (props: {
+  projectButton: JSX.Element
+}) => {
   return (
     <Header between={true}>
       <HeaderLeft gap={true}>
-        <Button type="link" style={{display:'inline-flex', alignItems:'center'}} onClick={resetRoute}>
-        <SoftwareLogo width={"18rem "} color={"rga(38,132,255)"} />
-
-        </Button>
-        <span>项目</span>
+        <ButtonNoPadding type="link" onClick={resetRoute}>
+            <SoftwareLogo width={"18rem "} color={"rga(38,132,255)"} />
+        </ButtonNoPadding>
+        <ProjectPopover {...props}></ProjectPopover>
+        {/* <span>项目</span> */}
         <span>用户</span>
       </HeaderLeft>
       <HeaderRight>
-        <Dropdown
-          overlay={
-            <Menu>
-              <Menu.Item key={"logout"}>
-                <Button onClick={logout} type="link">
-                  登出
-                </Button>
-              </Menu.Item>
-            </Menu>
-          }
-        >
-          <Button onClick={(e) => e.preventDefault()} type="link">
-            Hi, {user?.name}
-          </Button>
-        </Dropdown>
+        <User></User>
       </HeaderRight>
     </Header>
   );
 };
+
+const User = () => {
+  let { logout, user } = useAuth() as Auth;
+  return (
+    <Dropdown
+    overlay={
+      <Menu>
+        <Menu.Item key={"logout"}>
+          <Button onClick={logout} type="link">
+            登出
+          </Button>
+        </Menu.Item>
+      </Menu>
+    }
+  >
+    <Button onClick={(e) => e.preventDefault()} type="link">
+      Hi, {user?.name}
+    </Button>
+  </Dropdown>
+  )
+}
+
 
 // temporal dead zone(暂时性死区)
 const Container = styled.div`

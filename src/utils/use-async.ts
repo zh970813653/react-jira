@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react"
+import { useCallback, useReducer, useState } from "react"
 import { useMountedRef } from "."
 
 interface State<T>{
@@ -15,24 +15,43 @@ const defaultInitialState: State<null> = {
 const defaultConfig = {
     throwOnError: false
 }
+
+
+const useSafeDispatch = <T>(dispatch:(...args: T[]) => void) => {
+    const mountedRef = useMountedRef()
+    return useCallback((...args:T[])=> {
+        if (mountedRef.current) {
+            dispatch(...args )
+        }else{
+            void 0
+        }
+    },[dispatch,mountedRef])
+}
+
 export const useAsync = <T>(initialState?:State<T>,initialConfig?:typeof defaultConfig) => {
     const config = {...defaultConfig,...initialConfig}
-    const [state,setState] = useState({
+    const [state, dispatch] = useReducer((state:State<T>, action:Partial<State<T>>)=>{
+        return {
+            ...state,
+            ...action
+        }
+    },{
         ...defaultInitialState,
         ...initialState
     })
-    const mountedRef = useMountedRef()
+
+    const safeDispatch = useSafeDispatch(dispatch)
     const [retry,setRetry] = useState(()=>()=>{})
-    const setData = useCallback((data: T) => setState({
+    const setData = useCallback((data: T) => safeDispatch({
         data,
         error: null,
         stat: 'success'
-    }),[])
-    const setError = useCallback((error: Error) => setState({
+    }),[safeDispatch])
+    const setError = useCallback((error: Error) => safeDispatch({
         data: null, 
         error,
         stat:'error'
-    }),[])
+    }),[safeDispatch])
     const run = useCallback(
         (promise:Promise<T>,runConfig?:{ retry: ()=> Promise<T>}) => {
         if (!promise || !promise.then) {
@@ -43,12 +62,10 @@ export const useAsync = <T>(initialState?:State<T>,initialConfig?:typeof default
                 run (runConfig?.retry(),runConfig)
             }
         })
-        setState(prevState => ({...prevState,stat: 'loading'}))
+        safeDispatch({stat:"loading"})
         return promise.then(result => {
-            if (mountedRef.current) {
                 setData(result)
                 return result
-            }
 
         }).catch(error => {
             setError(error)
@@ -57,7 +74,7 @@ export const useAsync = <T>(initialState?:State<T>,initialConfig?:typeof default
             }
             return error 
         })
-    },[config.throwOnError,mountedRef,setData,setError])
+    },[config.throwOnError,setData,setError,safeDispatch])
 
     // const retry = () => {
     //     run(oldPromise)
