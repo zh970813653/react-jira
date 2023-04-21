@@ -70,7 +70,7 @@ export const useAsync = <T>(initialState?:State<T>,initialConfig?:typeof default
         }).catch(error => {
             setError(error)
             if (config.throwOnError) {
-                return Promise.reject()
+                return Promise.reject(error)
             }
             return error 
         })

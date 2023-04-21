@@ -1,14 +1,19 @@
 import React, { FormEvent } from "react";
-import { Auth, useAuth } from "../context/auth-content";
+import { useAuth } from "../context/auth-content";
 import { Button, Form, Input } from "antd";
 import { useAsync } from "../utils/use-async";
+import { useDispatch } from "react-redux";
 
 export const LoginScreen = ({onError}:{onError:(error:Error)=>void}) => {
-  const { login, user } = useAuth() as Auth;
+  const dispatch = useDispatch()
+
+
+
+  const { login, user } = useAuth()
   const {run,isLoading} = useAsync(undefined, {throwOnError: true})
   const handleSubmit = async (values:{username:string,password:string  }) => {
     try {
-      await run(login(values))
+      await run(login(values));
     } catch (error) {
       onError(error as Error)
     }
