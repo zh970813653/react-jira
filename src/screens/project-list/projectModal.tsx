@@ -1,7 +1,7 @@
 import { Button, Drawer, Form, Input, Spin } from 'antd'
 import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { useProjectModal } from './util'
+import { useProjectModal, useProjectsQueryKey } from './util'
 import { UserSelect } from '../../components/user-select'
 import { useAddProject, useEditProject } from '../../utils/projects'
 import { useForm } from 'antd/lib/form/Form'
@@ -13,7 +13,7 @@ export const ProjectModal = () => {
   const {projectModal,close,editingProject,isLoading} = useProjectModal()
   const title = editingProject ? '编辑项目':'添加项目'
   const useMutateProject = editingProject ? useEditProject : useAddProject
-  const {mutateAsync,error,isLoading:mutateLoading} = useMutateProject()
+  const {mutateAsync,error,isLoading:mutateLoading} = useMutateProject(useProjectsQueryKey())
   const [form] = useForm()
   const onFinish = async (values: any) => {
     await mutateAsync({...editingProject,...values})

@@ -10,14 +10,12 @@ import "antd/dist/antd.less";
 import { BrowserRouter } from "react-router-dom";
 loadServer(() =>
   ReactDOM.render(
-    <React.StrictMode>
       <AppProviders>
         <DevTools />
         <BrowserRouter>
           <App />
         </BrowserRouter>
-      </AppProviders>
-    </React.StrictMode>,
+      </AppProviders>,
     document.getElementById("root")
   )
 );

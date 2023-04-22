@@ -1,73 +1,45 @@
 import { Project } from "../screens/project-list/List";
+import { useProjectSearchParams } from "../screens/project-list/util";
 import { useHttp } from "./http";
-import { useMutation, useQuery, useQueryClient } from "react-query";
+import { QueryKey, useMutation, useQuery, useQueryClient } from "react-query";
+import { useAddConfig, useDeleteConfig, useEditConfig } from "./use-optimistic-options";
 
 export const useProjects = (params?: Partial<Project>) => {
     const http = useHttp()
-
     // useQuery 的key 不单单是可以是一个字符串 也可以是一个['project',params]  这个意思是当params变化的时候 会重新触发这个方法
     return useQuery<Project[]>(['projects',params],()=> {
        return http('projects',{data:params})
     })
-
-    // const {run,...result} = useAsync<Project[]>()
-    // const fetchProjects = useCallback(() => http('projects',{data:cleanObject(params)}),[http,params])
-    // useEffect(()=> {
-    //     run(fetchProjects(),{
-    //         retry: fetchProjects
-    //     })
-    // },[params,run,fetchProjects])
-    // return {
-    //     ...result
-    // }
 }
 
-export const useEditProject = () => {
+export const useEditProject = (queryKey: QueryKey) => {
     // const {run,...result} = useAsync()
-    const http = useHttp()
-    const queryClient = useQueryClient()
+    const http = useHttp()  
     return useMutation((params: Partial<Project>)=>http(`projects/${params.id}`,{
         method: 'PATCH',
         data: params
-    }),{
-        onSuccess: ()=> queryClient.invalidateQueries('projects')
-    })
-   
-    // const mutate = (params: Partial<Project>) => {
-    //     return run(http(`projects/${params.id}`, {
-    //         data: params,
-    //         method: 'PATCH'
-    //     }))
-    // }
-
-    // return {
-    //     mutate,
-    //     ...result
-    // }
+    }),
+    useEditConfig(queryKey)
+    )
 }
 
-export const useAddProject = () => {
-
-    // const {run,...result} = useAsync()
+export const useAddProject = (queryKey: QueryKey) => {
     const http = useHttp()
-    const queryClient = useQueryClient()
     return useMutation((params: Partial<Project>)=>http(`projects`,{
         data:params,
         method:'POST'
-    }),{
-        onSuccess: ()=> queryClient.invalidateQueries('projects')
-    })
-    // const mutate = (params: Partial<Project>) => {
-    //     run(http(`projects/${params.id}`, {
-    //         data: params,
-    //         method: 'POST'
-    //     }))
-    // }
+    }),
+    useAddConfig(queryKey)
+    )
+}
 
-    // return {
-    //     mutate,
-    //     ...result
-    // }
+export const useDeleteProject = (queryKey: QueryKey) => {
+    const http = useHttp()
+    return useMutation(({id}: {id:number})=>http(`projects/${id}`,{
+        method:'DELETE'
+    }),
+    useDeleteConfig(queryKey)
+    )
 }
 
 export const useProject = (id?: number) => {
