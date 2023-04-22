@@ -20,13 +20,14 @@ export interface Project {
 
 interface ListProps extends TableProps<Project> {
   users: User[];
-  refresh?: () => void
 }
 
 const List = ({ users, ...props}: ListProps) => {
   const {mutate} = useEditProject()
   const {open} = useProjectModal()
-  const pinProject = (id: number) => (pin: boolean) => mutate({id, pin}).then(props.refresh)
+  const {startEdit} = useProjectModal()
+  const pinProject = (id: number) => (pin: boolean) => mutate({id, pin})
+  const editProject = (id: number) => () => startEdit(id)
   return <Table pagination={false} rowKey="id" columns={
     [
       {
@@ -51,7 +52,7 @@ const List = ({ users, ...props}: ListProps) => {
         render(value,project){
           return (
             <span key={project.id}>
-              {users.find((user) => user.id === project.personId)?.name}
+              {users.find((user) => user.id === project.personId)?.name || '负责人'}
             </span>
           )
         }
@@ -71,9 +72,8 @@ const List = ({ users, ...props}: ListProps) => {
           return (
             <Dropdown overlay={
               <Menu>
-                <Menu.Item key='edit'>
-                  <ButtonNoPadding onClick={open} type='link'>编辑</ButtonNoPadding>
-                </Menu.Item>
+                <Menu.Item key='edit' onClick={editProject(project.id)} >编辑</Menu.Item>
+                <Menu.Item key='edit'>删除</Menu.Item>
               </Menu>
             }>
               <ButtonNoPadding type="link">...</ButtonNoPadding>

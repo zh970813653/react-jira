@@ -7,13 +7,13 @@ import styled from "@emotion/styled";
 import { useProjects } from "../../utils/projects";
 import { useUsers } from "../../utils/useUsers";
 import { useProjectModal, useProjectSearchParams } from "./util";
-import { ButtonNoPadding, Row } from "../../components/lib";
+import { ButtonNoPadding, ErrorBox, Row } from "../../components/lib";
 
 const ProjectListScreen = () => {
   const {open} = useProjectModal()
   const [param,setParam] = useProjectSearchParams()
   const debounceParamsValue = useDebounce(param,500)
-  const {data:list,isLoading,error,retry} = useProjects(debounceParamsValue)
+  const {data:list,isLoading,error} = useProjects(debounceParamsValue)
   const {data: users} = useUsers()
   return (
     <Container>
@@ -23,8 +23,8 @@ const ProjectListScreen = () => {
       </Row>
       
       <SearchPanel param={param || {}} setParam={setParam} users={users || []}></SearchPanel>
-       {error ? <Typography.Text type="danger">{error?.message}</Typography.Text>:null}
-      <List refresh={retry} dataSource={list || []} users={users||[]} loading={isLoading}></List>
+      {<ErrorBox error={error} />}
+      <List  dataSource={list || []} users={users||[]} loading={isLoading}></List>
     </Container>
   );
 };

@@ -110,5 +110,5 @@ const HeaderRight = styled.div``;
 const Main = styled.main`
   display: flex;
   /* width: 100%; */
-  overflow: hidden;
+  /* overflow: scroll; */
 `;
