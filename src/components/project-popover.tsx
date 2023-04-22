@@ -3,13 +3,13 @@ import React from 'react'
 import { useProjects } from '../utils/projects'
 import styled from '@emotion/styled'
 import { ButtonNoPadding } from './lib'
+import { useProjectModal } from '../screens/project-list/util'
 
-export const ProjectPopover = (props: {
-    projectButton: JSX.Element
-}) => {
-    const {isLoading,data:projects} = useProjects()
+export const ProjectPopover = () => {
+    const {data:projects} = useProjects()
     // 筛选出所有的收藏项目
     const pinnedProjects = projects?.filter(project => project.pin)
+    const {open} = useProjectModal()
     const content = ()=> {
         return (
             <ContentContainer>
@@ -24,7 +24,7 @@ export const ProjectPopover = (props: {
                     }
                  </List>
                  <Divider />
-                 {props.projectButton}
+                 <ButtonNoPadding onClick={open} type='link'>创建项目</ButtonNoPadding>
             </ContentContainer>
         ) 
     }

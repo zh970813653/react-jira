@@ -9,6 +9,8 @@ import { resetRoute, useDocumentTitle } from "./utils";
 import { Navigate, Route, Router, Routes } from "react-router-dom";
 import { ProjectScreen } from "./screens/project";
 import { ProjectPopover } from "./components/project-popover";
+import { useProjectModal } from "./screens/project-list/util";
+import { ProjectModal } from "./screens/project-list/projectModal";
 // import { useDocumentTitle } from "./utils";
 
 /**
@@ -25,15 +27,13 @@ import { ProjectPopover } from "./components/project-popover";
 
 export const AuthenticatedApp = () => {
   useDocumentTitle("项目列表", false);
-  const [projectModalOpen,setProjectModalOpen  ] = useState(false)
+  // const [projectModalOpen,setProjectModalOpen  ] = useState(false)
   return (
     <Container>
-      <PageHeader projectButton = {
-        <ButtonNoPadding type='link' onClick={() => setProjectModalOpen(true)}> 创建项目</ButtonNoPadding>
-      }></PageHeader>
+      <PageHeader></PageHeader>
       <Main>
           <Routes>
-            <Route path={'/projects'} element={<ProjectListScreen projectButton = { <ButtonNoPadding type='link' onClick={() => setProjectModalOpen(true)}> 创建项目</ButtonNoPadding>}/>}></Route>
+            <Route path={'/projects'} element={<ProjectListScreen />}></Route>
             <Route
               path={'/projects/:prujectId/*'}
               element={<ProjectScreen />}
@@ -42,21 +42,20 @@ export const AuthenticatedApp = () => {
             {/* <Route index  element={<ProjectListScreen />} /> */}
           </Routes>
       </Main>
+      <ProjectModal></ProjectModal>
     </Container>
   );
 };
 
-const PageHeader = (props: {
-  projectButton: JSX.Element
-}) => {
+const PageHeader = () => {
+  const {open} = useProjectModal()
   return (
     <Header between={true}>
       <HeaderLeft gap={true}>
         <ButtonNoPadding type="link" onClick={resetRoute}>
             <SoftwareLogo width={"18rem "} color={"rga(38,132,255)"} />
         </ButtonNoPadding>
-        <ProjectPopover {...props}></ProjectPopover>
-        {/* <span>项目</span> */}
+        <ProjectPopover></ProjectPopover>
         <span>用户</span>
       </HeaderLeft>
       <HeaderRight>

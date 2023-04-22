@@ -6,16 +6,11 @@ import {useDebounce} from '../../utils'
 import styled from "@emotion/styled";
 import { useProjects } from "../../utils/projects";
 import { useUsers } from "../../utils/useUsers";
-import { useProjectSearchParams } from "./util";
-import { Row } from "../../components/lib";
+import { useProjectModal, useProjectSearchParams } from "./util";
+import { ButtonNoPadding, Row } from "../../components/lib";
 
-const ProjectListScreen = (props: {
-  projectButton: JSX.Element
-}) => {
-  // const [, setParam] = useState({
-  //   name: "",
-  //   personId: "",
-  // });
+const ProjectListScreen = () => {
+  const {open} = useProjectModal()
   const [param,setParam] = useProjectSearchParams()
   const debounceParamsValue = useDebounce(param,500)
   const {data:list,isLoading,error,retry} = useProjects(debounceParamsValue)
@@ -24,12 +19,12 @@ const ProjectListScreen = (props: {
     <Container>
       <Row between={true }>
         <h1>项目列表</h1>
-        {props.projectButton}
+        <ButtonNoPadding onClick={open} type='link'>创建项目</ButtonNoPadding>
       </Row>
       
       <SearchPanel param={param || {}} setParam={setParam} users={users || []}></SearchPanel>
        {error ? <Typography.Text type="danger">{error?.message}</Typography.Text>:null}
-      <List refresh={retry} dataSource={list || []} users={users||[]} loading={isLoading} projectButton={props.projectButton}></List>
+      <List refresh={retry} dataSource={list || []} users={users||[]} loading={isLoading}></List>
     </Container>
   );
 };
