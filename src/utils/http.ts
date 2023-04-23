@@ -1,4 +1,3 @@
-import { paramsToString } from "./index";
 import * as auth from "../auth-provider";
 import { Auth, useAuth } from "../context/auth-content";
 import qs from "qs";

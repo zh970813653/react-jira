@@ -1,8 +1,9 @@
 import { Form, Input, Select } from "antd";
 import React from "react";
 import { useEffect, useState } from "react";
-import { Project } from "./List";
 import { UserSelect } from "../../components/user-select";
+import { Project } from "../../types/project";
+
 
 export interface User {
   id: number;

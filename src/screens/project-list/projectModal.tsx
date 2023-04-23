@@ -20,13 +20,17 @@ export const ProjectModal = () => {
     form.resetFields()
     close()
   }
+  const closeModal = () => {
+    form.resetFields()
+    close()
+}
 
   useEffect(()=>{
     form.setFieldsValue(editingProject)
   },[form,editingProject])
 
   return (
-   <Drawer forceRender={true} onClose={close} visible={projectModal} width={'100%'}>
+   <Drawer forceRender={true} onClose={closeModal} visible={projectModal} width={'100%'}>
     <Container>    
       {
       isLoading ? <Spin size='large'></Spin>: <>

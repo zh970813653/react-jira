@@ -7,8 +7,8 @@ import { EpicScrreen } from '../epic'
 export const ProjectScreen = () => {
   return (
     <div>
-      <Link to={'kanban'}>任务看板</Link>
-      <Link to={'epic'}>epic</Link>
+      {/* <Link to={'kanban'}>任务看板</Link>
+      <Link to={'epic'}>epic</Link> */}
       <Routes>
         <Route path='/kanban' element={<KanbanScrreen />}></Route>
         <Route path='/epic' element={<EpicScrreen />}></Route>

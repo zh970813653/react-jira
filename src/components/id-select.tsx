@@ -1,5 +1,5 @@
 import React from "react";
-import { Raw } from "../type";
+import { Raw } from "../types";
 import { Select } from "antd";
 
 
