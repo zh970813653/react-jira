@@ -1,7 +1,8 @@
 import { useHttp } from "./http";
-import {  useQuery } from "react-query";
+import {  QueryKey, useMutation, useQuery } from "react-query";
 import { Kanban } from "../types/kanban";
 import { Task } from "../types/task";
+import { useAddConfig } from "./use-optimistic-options";
 
 export const useTasks = (params?: Partial<Task>) => {
     const http = useHttp()
@@ -9,4 +10,13 @@ export const useTasks = (params?: Partial<Task>) => {
     return useQuery<Task[]>(['tasks',params],()=> {
        return http('tasks',{data:params})
     })
+}
+export const useAddTask= (queryKey: QueryKey) => {
+    const http = useHttp()
+    return useMutation((params: Partial<Task>)=>http(`tasks`,{
+        data:params,
+        method:'POST'
+    }),
+    useAddConfig(queryKey)
+    )
 }

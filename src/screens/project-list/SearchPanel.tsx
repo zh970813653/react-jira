@@ -45,16 +45,6 @@ export const SearchPanel = ({ param, setParam, users }: SearchPanelProps) => {
       </Form.Item>
       <Form.Item>
         <UserSelect value={param.personId} onChange={handleChangePersonId} defaultOptionName="负责人"></UserSelect>
-        {/* <Select value={param.personId} onChange={handleChangePersonId}>
-          <Select.Option value="">负责人</Select.Option>
-          {users.map((user: any) => {
-            return (
-              <Select.Option value={ String(user.id)} key={user.id}>
-                {user.name}
-              </Select.Option>
-            );
-          })}
-        </Select> */}
       </Form.Item>
     </Form>
   );

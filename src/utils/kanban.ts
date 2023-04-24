@@ -1,12 +1,23 @@
 
 import { useHttp } from "./http";
-import {  useQuery } from "react-query";
+import {  QueryKey, useMutation, useQuery } from "react-query";
 import { Kanban } from "../types/kanban";
+import { Project } from "../types/project";
+import { useAddConfig } from "./use-optimistic-options";
 
 export const useKanbans = (params?: Partial<Kanban>) => {
     const http = useHttp()
-    // useQuery 的key 不单单是可以是一个字符串 也可以是一个['project',params]  这个意思是当params变化的时候 会重新触发这个方法
     return useQuery<Kanban[]>(['kanbans',params],()=> {
        return http('kanbans',{data:params})
     })
+}
+
+export const useAddKanban = (queryKey: QueryKey) => {
+    const http = useHttp()
+    return useMutation((params: Partial<Kanban>)=>http(`kanbans`,{
+        data:params,
+        method:'POST'
+    }),
+    useAddConfig(queryKey)
+    )
 }
