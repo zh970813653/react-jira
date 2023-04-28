@@ -1,17 +1,19 @@
-import { Kanban } from "../../types/kanban";
-import { useTasks } from "../../utils/task";
 import React from "react";
-import { useKanbansQueryKey, useTasksModal, useTasksSearchParams } from "./util";
-import { useTaskTypes } from "../../utils/task-type";
 import taskIcon from "../../assets/task.svg";
 import bugIcon from "../../assets/bug.svg";
-import styled from "@emotion/styled";
-import { Button, Card, Dropdown, Menu, Modal } from "antd";
-import { CreateTask } from "./create-task";
+import { useTaskTypes } from "../../utils/task-type";
+import { useKanbansQueryKey, useTasksModal, useTasksSearchParams } from "./util";
 import { Task } from "../../types/task";
+import { Button, Card, Dropdown, Menu, Modal } from "antd";
 import { Mark } from "../../components/mark";
-import { useDeleteKanban } from "../../utils/kanban";
+import { Kanban } from "../../types/kanban";
+import { useTasks } from "../../utils/task";
 import { Row } from "../../components/lib";
+import { Drag, Drop, DropChild } from "../../components/drag-and-drop";
+import { CreateTask } from "./create-task";
+import { useDeleteKanban } from "../../utils/kanban";
+import styled from "@emotion/styled";
+
 
 const TaskTypeIcon = ({ id }: { id: number }) => {
   const { data: taskTypes } = useTaskTypes();
@@ -19,51 +21,63 @@ const TaskTypeIcon = ({ id }: { id: number }) => {
   if (!name) {
     return null;
   }
-  return <img src={name === "task" ? taskIcon : bugIcon} alt=""></img>;
+  return <img alt={"task-icon"} src={name === "task" ? taskIcon : bugIcon} />;
 };
 
 const TaskCard = ({ task }: { task: Task }) => {
   const { startEdit } = useTasksModal();
-  const {name: keyword} = useTasksSearchParams()
+  const { name: keyword } = useTasksSearchParams();
   return (
     <Card
+      onClick={() => startEdit(task.id)}
+      style={{ marginBottom: "0.5rem", cursor: "pointer" }}
       key={task.id}
-      style={{ marginBottom: "0.5rem" }}
-      onClick={() => startEdit(task.id)}>
-      {/* <div>{task.name}</div> */}
-     
-      <Mark name={task.name} keyword={keyword }></Mark>
-      <br />
+    >
+      <p>
+        <Mark keyword={keyword} name={task.name} />
+      </p>
       <TaskTypeIcon id={task.typeId} />
     </Card>
   );
 };
 
-
-
-export const KanbanColumn = ({ kanban }: { kanban: Kanban }) => {
-  const { data: allTasks } = useTasks(useTasksSearchParams()); // react-query默认帮我们设置了时间 ，默认2s内 重复请求不会发送http请求 用缓存的数据
+export const KanbanColumn = React.forwardRef<
+  HTMLDivElement,
+  { kanban: Kanban }
+>(({ kanban, ...props }, ref) => {
+  const { data: allTasks } = useTasks(useTasksSearchParams());
   const tasks = allTasks?.filter((task) => task.kanbanId === kanban.id);
-  const { startEdit } = useTasksModal();
   return (
-    <Container>
+    <Container {...props} ref={ref}>
       <Row between={true}>
         <h3>{kanban.name}</h3>
-        <More kanban={kanban} />
+        <More kanban={kanban} key={kanban.id} />
       </Row>
       <TasksContainer>
-        
-        {tasks?.map((task) => {
-          return (
-            <TaskCard task={task}></TaskCard>
-          );
-        })}
-        <CreateTask kanbanId={kanban.id}></CreateTask>
+        <Drop
+          type={"ROW"}
+          direction={"vertical"}
+          droppableId={String(kanban.id)}
+        >
+          <DropChild style={{ minHeight: "1rem" }}>
+            {tasks?.map((task, taskIndex) => (
+              <Drag
+                key={task.id}
+                index={taskIndex}
+                draggableId={"task" + task.id}
+              >
+                <div>
+                  <TaskCard key={task.id} task={task} />  
+                </div>
+              </Drag>
+            ))}
+          </DropChild>
+        </Drop>
+        <CreateTask kanbanId={kanban.id} />
       </TasksContainer>
     </Container>
   );
-};
-
+});
 
 const More = ({ kanban }: { kanban: Kanban }) => {
   const { mutateAsync } = useDeleteKanban(useKanbansQueryKey());
@@ -79,7 +93,7 @@ const More = ({ kanban }: { kanban: Kanban }) => {
   };
   const overlay = (
     <Menu>
-      <Menu.Item>
+      <Menu.Item key={kanban.id}>
         <Button type={"link"} onClick={startDelete}>
           删除
         </Button>
@@ -92,7 +106,6 @@ const More = ({ kanban }: { kanban: Kanban }) => {
     </Dropdown>
   );
 };
-
 
 export const Container = styled.div`
   min-width: 27rem;
