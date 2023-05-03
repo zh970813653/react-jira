@@ -3,7 +3,7 @@ import { useHttp } from "./http";
 import {  QueryKey, useMutation, useQuery } from "react-query";
 import { Kanban } from "../types/kanban";
 import { Project } from "../types/project";
-import { useAddConfig, useDeleteConfig } from "./use-optimistic-options";
+import { useAddConfig, useDeleteConfig, useReorderKanbanConfig } from "./use-optimistic-options";
 
 export const useKanbans = (params?: Partial<Kanban>) => {
     const http = useHttp()
@@ -45,13 +45,13 @@ export const useDeleteKanban = (queryKey: QueryKey) => {
     toKanbanId?: number;
   }
   
-  // export const useReorderKanban = (queryKey: QueryKey) => {
-  //   const client = useHttp();
-  //   return useMutation((params: SortProps) => {
-  //     return client("kanbans/reorder", {
-  //       data: params,
-  //       method: "POST",
-  //     });
-  //   }, useReorderKanbanConfig(queryKey));
-  // };
+  export const useReorderKanban = (queryKey: QueryKey) => {
+    const client = useHttp();
+    return useMutation((params: SortProps) => {
+      return client("kanbans/reorder", {
+        data: params,
+        method: "POST",
+      });
+    }, useReorderKanbanConfig(queryKey));
+  };
   

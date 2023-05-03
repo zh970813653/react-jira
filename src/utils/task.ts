@@ -2,9 +2,10 @@ import { useHttp } from "./http";
 import {  QueryKey, useMutation, useQuery } from "react-query";
 import { Kanban } from "../types/kanban";
 import { Task } from "../types/task";
-import { useAddConfig, useDeleteConfig, useEditConfig } from "./use-optimistic-options";
+import { useAddConfig, useDeleteConfig, useEditConfig, useReorderTaskConfig } from "./use-optimistic-options";
 import { Project } from "../types/project";
 import { useDebounce } from ".";
+import { SortProps } from "./kanban";
 
 // 获取所有任务列表
 export const useTasks = (params?: Partial<Task>) => {
@@ -57,13 +58,13 @@ export const useTask = (id?: number) => {
     );
   };
   
-//   export const useReorderTask = (queryKey: QueryKey) => {
-//     const client = useHttp();
-//     return useMutation((params: SortProps) => {
-//       return client("tasks/reorder", {
-//         data: params,
-//         method: "POST",
-//       });
-//     }, useReorderTaskConfig(queryKey));
-//   };
+  export const useReorderTask = (queryKey: QueryKey) => {
+    const client = useHttp();
+    return useMutation((params: SortProps) => {
+      return client("tasks/reorder", {
+        data: params,
+        method: "POST",
+      });
+    }, useReorderTaskConfig(queryKey));
+  };
   
