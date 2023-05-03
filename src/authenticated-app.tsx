@@ -11,6 +11,7 @@ import { ProjectScreen } from "./screens/project";
 import { ProjectPopover } from "./components/project-popover";
 import { useProjectModal } from "./screens/project-list/util";
 import { ProjectModal } from "./screens/project-list/projectModal";
+import { UserPopover } from "./components/user-popover";
 // import { useDocumentTitle } from "./utils";
 
 /**
@@ -56,7 +57,7 @@ const PageHeader = () => {
             <SoftwareLogo width={"18rem "} color={"rga(38,132,255)"} />
         </ButtonNoPadding>
         <ProjectPopover></ProjectPopover>
-        <span>用户</span>
+        <UserPopover></UserPopover>
       </HeaderLeft>
       <HeaderRight>
         <User></User>
