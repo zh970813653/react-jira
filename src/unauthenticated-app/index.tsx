@@ -7,7 +7,10 @@ import logo from "../assets/logo.svg";
 import left from "../assets/left.svg";
 import right from "../assets/right.svg";
 import { ErrorBox } from "../components/lib";
-export const UnAuthenticatedApp = () => {
+
+
+// UnAuthenticatedApp
+export default () => {
   const [isRegister, setIsRegister] = useState<boolean>(false);
   const [error,setError] = useState<Error|undefined>()
   return (

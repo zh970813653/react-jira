@@ -25,8 +25,8 @@ import { UserPopover } from "./components/user-popover";
  * 从布局出发，用grid
  *
  */
-
-export const AuthenticatedApp = () => {
+// AuthenticatedApp
+export default  () => {
   useDocumentTitle("项目列表", false);
   // const [projectModalOpen,setProjectModalOpen  ] = useState(false)
   return (
